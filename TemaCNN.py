@@ -54,57 +54,47 @@ TRAIN_DEST = os.path.join(BASE_DEST_DIR, "train")
 TEST_DEST = os.path.join(BASE_DEST_DIR, "test")
 
 SPECIES_MAP = {
-    "Apple Braeburn": "Apple Braeburn",
-    "Apple Crimson Snow": "Apple Crimson Snow",
+    "Apple Braeburn 1": "Apple Braeburn",
+    "Apple Crimson Snow 1": "Apple Crimson Snow",
     "Apple Golden 1": "Apple Golden",
     "Apple Golden 2": "Apple Golden",
     "Apple Golden 3": "Apple Golden",
-    "Apple Granny Smith": "Apple Granny Smith",
-    "Apple Pink Lady": "Apple Pink Lady",
+    "Apple Granny Smith 1": "Apple Granny Smith",
+    "Apple Pink Lady 1": "Apple Pink Lady",
     "Apple Red 1": "Apple Red",
     "Apple Red 2": "Apple Red",
     "Apple Red 3": "Apple Red",
-    "Apple Red Delicious": "Apple Red Delicious",
+    "Apple Red Delicious 1": "Apple Red Delicious",
     "Apple Red Yellow 1": "Apple Red Yellow",
     "Apple Red Yellow 2": "Apple Red Yellow"
 }
 
 def process_subset(source_root, dest_root, subset_name):
-    """
-    Helper to copy images from source_root (e.g., raw Training folder)
-    to dest_root (e.g., filtered_apples/train), merging classes.
-    """
-    print(f"\nProcessing {subset_name} data...")
     
     if not os.path.exists(dest_root):
         os.makedirs(dest_root)
 
     count = 0
-    # Iterate through every folder in the source directory
+
     for folder_name in os.listdir(source_root):
         source_folder = os.path.join(source_root, folder_name)
 
-        # check if it is a directory and if it is in our apple map
         if os.path.isdir(source_folder) and folder_name in SPECIES_MAP:
             target_class = SPECIES_MAP[folder_name]
             target_folder = os.path.join(dest_root, target_class)
-            
+            if (folder_name == "Apple Braeburn"):
+              print("Processing "+ folder_name + " into "+ SPECIES_MAP[folder_name])
             os.makedirs(target_folder, exist_ok=True)
 
-            # Copy files
             for image_file in os.listdir(source_folder):
                 if image_file.lower().endswith(('.jpg', '.jpeg', '.png')):
                     src_file = os.path.join(source_folder, image_file)
-                    
-                    # Rename to avoid collisions (e.g. Golden 1 vs Golden 2)
+
                     new_name = f"{folder_name}_{image_file}"
                     dst_file = os.path.join(target_folder, new_name)
 
                     shutil.copy2(src_file, dst_file)
                     count += 1
-            
-            # Optional: Print progress for this specific folder
-            # print(f"  Mapped: {folder_name} -> {target_class}")
 
     print(f"Finished {subset_name}: {count} images organized into '{dest_root}'")
 
